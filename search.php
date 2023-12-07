@@ -2,10 +2,11 @@
 
 require_once 'PDO.php';
 
+
 try {
     $searchTerm = '%' . $_GET['searchTerm'] . '%';
 
-    $sql = "SELECT title, cast FROM movies_full WHERE cast LIKE :searchTerm";
+    $sql = "SELECT title, cast FROM movies_full WHERE cast LIKE :searchTerm LIMIT 0,25";
 
     $pdo->setAttribute(PDO::MYSQL_ATTR_INIT_COMMAND, 'SET NAMES utf8');
 
@@ -13,10 +14,7 @@ try {
     $stmt->bindParam(':searchTerm', $searchTerm, PDO::PARAM_STR);
     $stmt->execute();
 
-    $data = array();
-    while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
-        $data[] = $row;
-    }
+    $data = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
     $json_data = json_encode($data);
 
@@ -24,3 +22,4 @@ try {
 } catch (PDOException $e) {
     die("Erreur PDO : " . $e->getMessage());
 }
+
